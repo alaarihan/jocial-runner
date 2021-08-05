@@ -1,5 +1,5 @@
 import { createClient } from '@urql/core'
-global.fetch = require("node-fetch");
+global.fetch = require('node-fetch')
 export const gqlClient = createClient({
   url: `${process.env.API_URL}/graphql`,
   fetchOptions: () => {
