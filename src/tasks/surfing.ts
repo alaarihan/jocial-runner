@@ -14,9 +14,9 @@ export async function runSurfing(account = null) {
       return
     }
   }
-  const browser = (await getBrowser().catch((err) => {
+  const browser = await getBrowser().catch((err) => {
     createLog(err.message)
-  }))
+  })
   if (!browser) return
   createLog('Update account status to Online')
   updateAccount({
@@ -66,7 +66,7 @@ export async function runSurfing(account = null) {
   await surfingLoop(surfingPage)
   createLog('Finished surfing websites')
   await browser.close()
-  runSurfing(account)
+  runSurfing()
 }
 
 async function surfingLoop(page: Page, loop = 1) {
@@ -87,12 +87,8 @@ async function surfingLoop(page: Page, loop = 1) {
   await page
     .waitForSelector('#rating', { visible: true, timeout: 200000 })
     .catch(async (err) => {
-      await page.goto(
-        'https://www.asia-region.jocial.com/Account/RewardProgram/Promotional/WebSurf',
-      )
       await page.screenshot({ path: 'rating.png' })
-      await surfingLoop(page, loop)
-      return
+      throw err
     })
   await page.click('li[data-value="5"]')
   await page.waitForTimeout(1000)
