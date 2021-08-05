@@ -16,7 +16,7 @@ export async function runSurfing(account = null) {
   }
   const browser = (await getBrowser().catch((err) => {
     createLog(err.message)
-  })) as Browser
+  }))
   if (!browser) return
   createLog('Update account status to Online')
   updateAccount({
