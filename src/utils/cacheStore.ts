@@ -5,7 +5,7 @@ export const cacheStore = new NodeCache({ useClones: false })
 
 export async function getBrowser(
   getNew: boolean = true,
-): Promise<puppeteer.Browser> {
+): Promise<Browser> {
   if (cacheStore.get('browser') === undefined) {
     const browser = await puppeteer.launch({
       headless: process.env.HEADLESS !== 'no' ? true : false,
