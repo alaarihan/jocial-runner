@@ -20,8 +20,9 @@ export async function updateInactiveAccountsStatus() {
         await updateAccount({
           data: {
             status: 'OFFLINE',
-            where: { id: { equals: accounts[i].id } },
+            statusDuration: 0,
           },
+          where: { id: accounts[i].id },
         })
       }
     }

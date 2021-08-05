@@ -3,7 +3,7 @@ import { gqlClient } from './gqlClient'
 
 export async function getAccount(
   variables = {
-    orderBy: { lastActivity: 'asc' },
+    orderBy: { lastActivity: 'desc' },
     where: { status: { equals: 'OFFLINE' } } as any,
   },
 ) {
@@ -11,6 +11,7 @@ export async function getAccount(
   query getAccount($orderBy: [AccountOrderByInput], $where: AccountWhereInput) {
     findFirstAccount(orderBy: $orderBy, where: $where) {
       id
+      name
       username
       password
       pin
@@ -42,6 +43,7 @@ export async function getAccounts(
   query getAccount($orderBy: [AccountOrderByInput], $where: AccountWhereInput) {
     findManyAccount(orderBy: $orderBy, where: $where) {
       id
+      name
       username
       password
       pin
@@ -66,6 +68,7 @@ export async function updateAccount(variables) {
   mutation updateAccount($data: AccountUpdateInput!, $where: AccountWhereUniqueInput!) {
     updateOneAccount(data: $data, where: $where) {
       id
+      name
       username
       password
       pin

@@ -1,4 +1,4 @@
-import { Page } from 'puppeteer'
+import { Browser, Page } from 'puppeteer'
 import { cacheStore, getBrowser } from '../utils/cacheStore'
 import { getAccount, updateAccount } from '../utils/account'
 import { createLog } from '../utils/createLog'
@@ -14,34 +14,44 @@ export async function runSurfing(account = null) {
       return
     }
   }
-  const browser = await getBrowser()
+  const browser = (await getBrowser().catch((err) => {
+    createLog(err.message)
+  })) as Browser
+  if (!browser) return
   createLog('Update account status to Online')
   updateAccount({
-    data: { status: 'ONLINE', statusDuration: 6, lastActivity: new Date() },
+    data: { status: 'ONLINE', statusDuration: 3, lastActivity: new Date() },
     where: { id: account.id },
   })
   const page = await browser.newPage()
+  await page.setViewport({
+    width: 1200,
+    height: 800,
+    deviceScaleFactor: 1,
+  })
   await page.goto('https://www.asia-region.jocial.com/')
   await page.waitForSelector('iframe[title="reCAPTCHA"').catch(async (err) => {
     await browser.close()
-    runSurfing(account)
+    // runSurfing(account)
     return
   })
   await page.waitForTimeout(2000)
-  createLog('Logging in')
+  createLog(`Logging in account ${account.name}`)
   await page.waitForSelector('input[type=text]')
   await page.type('input[type=text]', account.username)
   await page.keyboard.down('Tab')
   await page.keyboard.type(account.password)
   await page.click('#btnlogin')
-  await page.waitForSelector('a[href="/Account/Home"]')
+  await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
   createLog('Going to surf websites')
   await page.click('a[href="/Account/Home"]')
-  await page.waitForSelector('#welcomemsgbtn1')
+  await page.waitForSelector('#welcomemsgbtn1', { visible: true })
   await page.click('#welcomemsgbtn1')
   await page.waitForTimeout(2000)
   await page.click('a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp')
-  await page.waitForSelector('a[href="/Account/RewardProgram/Promotional/"]')
+  await page.waitForSelector('a[href="/Account/RewardProgram/Promotional/"]', {
+    visible: true,
+  })
   await page.click('a[href="/Account/RewardProgram/Promotional/"]')
   await page.waitForSelector(
     'a[href="/Account/RewardProgram/Promotional/WebSurf"]',
@@ -56,6 +66,7 @@ export async function runSurfing(account = null) {
   await surfingLoop(surfingPage)
   createLog('Finished surfing websites')
   await browser.close()
+  runSurfing(account)
 }
 
 async function surfingLoop(page: Page, loop = 1) {
@@ -79,6 +90,7 @@ async function surfingLoop(page: Page, loop = 1) {
       await page.goto(
         'https://www.asia-region.jocial.com/Account/RewardProgram/Promotional/WebSurf',
       )
+      await page.screenshot({ path: 'rating.png' })
       await surfingLoop(page, loop)
       return
     })

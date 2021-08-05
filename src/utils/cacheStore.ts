@@ -1,9 +1,11 @@
 import NodeCache from 'node-cache'
-import puppeteer from 'puppeteer'
+import puppeteer, { Browser } from 'puppeteer'
 
 export const cacheStore = new NodeCache({ useClones: false })
 
-export async function getBrowser(): Promise<puppeteer.Browser> {
+export async function getBrowser(
+  getNew: boolean = true,
+): Promise<puppeteer.Browser> {
   if (cacheStore.get('browser') === undefined) {
     const browser = await puppeteer.launch({
       headless: process.env.HEADLESS === 'yes' ? true : false,
@@ -12,10 +14,18 @@ export async function getBrowser(): Promise<puppeteer.Browser> {
     })
 
     browser.on('disconnected', () => {
-      cacheStore.flushAll()
+      cacheStore.del('browser')
     })
 
     cacheStore.set('browser', browser)
+  } else {
+    const browser = cacheStore.get('browser') as Browser
+    if (!browser.isConnected()) {
+      cacheStore.del('browser')
+      return await getBrowser()
+    } else if (getNew) {
+      throw new Error('There is a woking browser already!')
+    }
   }
 
   return cacheStore.get('browser')
