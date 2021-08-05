@@ -8,7 +8,7 @@ export async function getBrowser(
 ): Promise<puppeteer.Browser> {
   if (cacheStore.get('browser') === undefined) {
     const browser = await puppeteer.launch({
-      headless: process.env.HEADLESS === 'yes' ? true : false,
+      headless: process.env.HEADLESS !== 'no' ? true : false,
       defaultViewport: null,
       args: ['--no-sandbox', '--disable-features=site-per-process'],
     })
