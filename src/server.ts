@@ -26,7 +26,7 @@ const template = `
   </ul>
   {{/if}}
   {{#if files}}
-  list
+  files
   <ul>
     {{#files}}
       <li><a href="/public{{href}}" target="_blank">{{name}}</a></li>
