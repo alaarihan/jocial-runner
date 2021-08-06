@@ -1,4 +1,4 @@
-import { Browser, Page } from 'puppeteer'
+import { Page } from 'puppeteer'
 import { cacheStore, getBrowser } from '../utils/cacheStore'
 import { getAccount, updateAccount } from '../utils/account'
 import { createLog } from '../utils/createLog'
@@ -18,7 +18,7 @@ export async function runSurfing(account = null) {
     createLog(err.message)
   })
   if (!browser) return
-  createLog('Update account status to Online')
+  createLog(`Update account "${account.name}" status to Online`)
   updateAccount({
     data: { status: 'ONLINE', statusDuration: 3, lastActivity: new Date() },
     where: { id: account.id },
@@ -36,7 +36,7 @@ export async function runSurfing(account = null) {
     return
   })
   await page.waitForTimeout(2000)
-  createLog(`Logging in account ${account.name}`)
+  createLog(`Logging in account "${account.name}"`)
   await page.waitForSelector('input[type=text]')
   await page.type('input[type=text]', account.username)
   await page.keyboard.down('Tab')
@@ -45,12 +45,15 @@ export async function runSurfing(account = null) {
   await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
   createLog('Going to surf websites')
   await page.click('a[href="/Account/Home"]')
-  await page.waitForSelector('#welcomemsgbtn1', { visible: true }).then(async()=> {
-    await page.click('#welcomemsgbtn1')
-  }).catch(err =>{
-    console.log('welcomemsgbtn1 not found!')
-  })
- 
+  await page
+    .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
+    .then(async () => {
+      await page.click('#welcomemsgbtn1')
+    })
+    .catch((err) => {
+      console.log('welcomemsgbtn1 not found!')
+    })
+
   await page.waitForTimeout(2000)
   await page.click('a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp')
   await page.waitForSelector('a[href="/Account/RewardProgram/Promotional/"]', {
@@ -89,10 +92,17 @@ async function surfingLoop(page: Page, loop = 1) {
     return
   }
   await page
-    .waitForSelector('#rating', { visible: true, timeout: 200000 })
+    .waitForSelector('#rating', { visible: true, timeout: 150000 })
     .catch(async (err) => {
       await page.screenshot({ path: 'rating.png' })
-      throw err
+      createLog('Click skip button because the rating element did not show up')
+      await page.click('#Skip')
+      await page.waitForTimeout(1000)
+      updateAccount({
+        data: { lastActivity: new Date() },
+        where: { id: account.id },
+      })
+      await page.waitForSelector('#rating', { visible: true, timeout: 150000 })
     })
   await page.click('li[data-value="5"]')
   await page.waitForTimeout(1000)

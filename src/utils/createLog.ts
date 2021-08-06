@@ -1,3 +1,4 @@
+import { cacheStore } from './cacheStore'
 import { gqlClient } from './gqlClient'
 
 export async function createLog(message, type = 'INFO') {
@@ -11,8 +12,17 @@ export async function createLog(message, type = 'INFO') {
     }
   }
 `
+  const account = cacheStore.get('account') as any
+  const data = { message, type } as any
+  if (account?.id) {
+    data.account = {
+      connect: {
+        id: account.id,
+      },
+    }
+  }
   const log = await gqlClient
-    .mutation(QUERY, { data: { message, type } })
+    .mutation(QUERY, { data })
     .toPromise()
     .then((result) => {
       return result?.data?.createOneLog
