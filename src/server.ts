@@ -1,5 +1,6 @@
 import fastify from 'fastify'
 import { runSurfing } from './tasks/surfing'
+import { takeScreenshot } from './tasks/takeScreenshot'
 import { cacheStore } from './utils/cacheStore'
 
 export const app = fastify()
@@ -20,6 +21,14 @@ app.get('/run/surfing', async (req, reply) => {
   runSurfing()
   return reply.status(200).send('Running website surfing.')
 })
+
+app.get('/run/screenshot', async (req, reply) => {
+    if (req.query['secret'] !== process.env.APP_SECRET) {
+      return reply.status(403).send('Unauthorized!')
+    }
+    takeScreenshot()
+    return reply.status(200).send('Taking a screenshot.')
+  })
 
 app
   .listen(3001)
