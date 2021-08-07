@@ -4,7 +4,9 @@ import { gqlClient } from './gqlClient'
 export async function getAccount(
   variables = {
     orderBy: { lastActivity: 'desc' },
-    where: { status: { equals: 'OFFLINE' } } as any,
+    where: {
+      status: { equals: 'OFFLINE', loginActivity: { notIn: ['ONLINE'] } },
+    } as any,
   },
 ) {
   const QUERY = `
@@ -18,6 +20,7 @@ export async function getAccount(
       lastActivity
       status
       statusDuration
+      loginActivity
     }
   }
 `
@@ -50,6 +53,7 @@ export async function getAccounts(
       lastActivity
       status
       statusDuration
+      loginActivity
     }
   }
 `
@@ -75,6 +79,7 @@ export async function updateAccount(variables) {
       lastActivity
       status
       statusDuration
+      loginActivity
     }
   }
 `

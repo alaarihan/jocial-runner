@@ -1,6 +1,7 @@
 import fastify from 'fastify'
 import Handlebars from 'handlebars'
 import path from 'path'
+import { runLoginActivity } from './tasks/loginActivity'
 import { runSurfing } from './tasks/surfing'
 import { takeScreenshot } from './tasks/takeScreenshot'
 import { cacheStore } from './utils/cacheStore'
@@ -64,6 +65,17 @@ app.get('/run/surfing', async (req, reply) => {
   runSurfing()
   return reply.status(200).send('Running website surfing.')
 })
+
+app.get('/run/loginActivity', async (req, reply) => {
+    if (req.query['secret'] !== process.env.APP_SECRET) {
+      return reply.status(403).send('Unauthorized!')
+    }
+    if (req.query['owner']) {
+      cacheStore.set('owner', parseInt(req.query['owner']))
+    }
+    runLoginActivity()
+    return reply.status(200).send('Running login activity.')
+  })
 
 app.get('/run/screenshot', async (req, reply) => {
   if (req.query['secret'] !== process.env.APP_SECRET) {
