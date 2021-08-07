@@ -86,7 +86,7 @@ app.get('/run/screenshot', async (req, reply) => {
 })
 
 app
-  .listen(3001)
+  .listen(process.env.PORT || 3001)
   .then(() => console.log(`🚀 Runner ready at http://localhost:3001`))
   .catch((err) => {
     console.log(err)
