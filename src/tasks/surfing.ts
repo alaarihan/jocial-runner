@@ -94,7 +94,6 @@ async function surfingLoop(page: Page, loop = 1) {
   await page
     .waitForSelector('#rating', { visible: true, timeout: 150000 })
     .catch(async (err) => {
-      await page.screenshot({ path: 'rating.png' })
       createLog('Click skip button because the rating element did not show up')
       await page.click('#Skip')
       await page.waitForTimeout(1000)
