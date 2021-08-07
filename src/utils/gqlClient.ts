@@ -7,4 +7,5 @@ export const gqlClient = createClient({
       headers: { 'root-secret': process.env.API_ROOT_SECRET },
     }
   },
+  requestPolicy: 'network-only'
 })
