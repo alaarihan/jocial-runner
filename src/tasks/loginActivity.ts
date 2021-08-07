@@ -2,12 +2,19 @@ import { Browser, Page } from 'puppeteer'
 import { cacheStore, getBrowser } from '../utils/cacheStore'
 import { getAccount, updateAccount } from '../utils/account'
 import { createLog } from '../utils/createLog'
-import { updateInactiveAccountsLoginActivity, updateInactiveAccountsStatus } from '../utils/updateInactiveAccountsStatus'
+import {
+  updateInactiveAccountsLoginActivity,
+  updateInactiveAccountsStatus,
+} from '../utils/updateInactiveAccountsStatus'
 
 export async function runLoginActivity(account = null) {
   try {
     await updateInactiveAccountsStatus()
     await updateInactiveAccountsLoginActivity()
+    const browser = await getBrowser().catch((err) => {
+      createLog(err.message)
+    })
+    if (!browser) return
     if (!account) {
       account = await getAccount({
         orderBy: { lastActivity: 'desc' },
@@ -23,10 +30,6 @@ export async function runLoginActivity(account = null) {
         return
       }
     }
-    const browser = await getBrowser().catch((err) => {
-      createLog(err.message)
-    })
-    if (!browser) return
     createLog(`Update account "${account.name}" loginActivity status to Online`)
     updateAccount({
       data: { loginActivity: 'ONLINE', lastActivity: new Date() },

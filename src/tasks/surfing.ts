@@ -7,6 +7,10 @@ import { minutesUntilMidnight } from '../utils/utils'
 
 export async function runSurfing(account = null) {
   await updateInactiveAccountsStatus()
+  const browser = await getBrowser().catch((err) => {
+    createLog(err.message)
+  })
+  if (!browser) return
   if (!account) {
     account = await getAccount()
     if (!account) {
@@ -14,10 +18,6 @@ export async function runSurfing(account = null) {
       return
     }
   }
-  const browser = await getBrowser().catch((err) => {
-    createLog(err.message)
-  })
-  if (!browser) return
   createLog(`Update account "${account.name}" status to Online`)
   updateAccount({
     data: { status: 'ONLINE', statusDuration: 3, lastActivity: new Date() },
