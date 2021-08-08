@@ -14,6 +14,7 @@ export async function runSurfing(account = null) {
   if (!account) {
     account = await getAccount()
     if (!account) {
+      await browser.close()
       createLog('No offline accounts found!')
       return
     }

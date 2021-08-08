@@ -24,6 +24,7 @@ export async function runLoginActivity(account = null) {
         } as any,
       })
       if (!account) {
+        await browser.close()
         createLog(
           'Not found account with DONE status and loginActivity OFFLINE status',
         )

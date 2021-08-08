@@ -32,7 +32,6 @@ export async function getAccount(
     .query(QUERY, variables)
     .toPromise()
     .then((result) => {
-      console.log(result)
       return result?.data?.findFirstAccount
     })
 
