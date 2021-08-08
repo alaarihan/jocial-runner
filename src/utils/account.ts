@@ -5,7 +5,8 @@ export async function getAccount(
   variables = {
     orderBy: { lastActivity: 'desc' },
     where: {
-      status: { equals: 'OFFLINE', loginActivity: { notIn: ['ONLINE'] } },
+      status: { equals: 'OFFLINE' },
+      loginActivity: { notIn: ['ONLINE'] }
     } as any,
   },
 ) {
@@ -31,6 +32,7 @@ export async function getAccount(
     .query(QUERY, variables)
     .toPromise()
     .then((result) => {
+      console.log(result)
       return result?.data?.findFirstAccount
     })
 
