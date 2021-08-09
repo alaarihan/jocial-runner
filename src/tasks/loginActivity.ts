@@ -6,6 +6,7 @@ import {
   updateInactiveAccountsLoginActivity,
   updateInactiveAccountsStatus,
 } from '../utils/updateInactiveAccountsStatus'
+import { minutesUntilMidnight } from '../utils/utils'
 
 export async function runLoginActivity(account = null) {
   try {
@@ -97,7 +98,7 @@ async function loginActivityCheck(page: Page, loop = 1) {
     await page.click('a[href="/Account/Logout"]')
     await page.waitForTimeout(7000)
     await updateAccount({
-      data: { loginActivity: 'DONE' },
+      data: { loginActivity: 'DONE', statusDuration: minutesUntilMidnight() },
       where: { id: account.id },
     })
     return
