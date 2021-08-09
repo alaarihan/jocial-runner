@@ -6,9 +6,10 @@ import {
   updateInactiveAccountsLoginActivity,
   updateInactiveAccountsStatus,
 } from '../utils/updateInactiveAccountsStatus'
-import { minutesUntilMidnight } from '../utils/utils'
+import { minutesUntilMidnight, wakeupCall } from '../utils/utils'
 
 export async function runLoginActivity(account = null) {
+  createLog('Starting login activity')
   try {
     await updateInactiveAccountsStatus()
     await updateInactiveAccountsLoginActivity()
@@ -112,5 +113,6 @@ async function loginActivityCheck(page: Page, loop = 1) {
     `Login activity progress for account ${account.name}: ${loop * 3} minutes`,
   )
   loop++
+  wakeupCall()
   await loginActivityCheck(page, loop)
 }

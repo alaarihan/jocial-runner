@@ -5,6 +5,7 @@ import { runLoginActivity } from './tasks/loginActivity'
 import { runSurfing } from './tasks/surfing'
 import { takeScreenshot } from './tasks/takeScreenshot'
 import { cacheStore } from './utils/cacheStore'
+import { wakeupCall } from './utils/utils'
 
 export const app = fastify()
 
@@ -83,6 +84,11 @@ app.get('/run/screenshot', async (req, reply) => {
   }
   takeScreenshot()
   return reply.status(200).send('Taking a screenshot.')
+})
+
+app.get('/callWebhook', async (req, reply) => {
+  wakeupCall()
+  return reply.status(200).send('The url has been called successfully.')
 })
 
 app

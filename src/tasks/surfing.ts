@@ -3,9 +3,11 @@ import { cacheStore, getBrowser } from '../utils/cacheStore'
 import { getAccount, updateAccount } from '../utils/account'
 import { createLog } from '../utils/createLog'
 import { updateInactiveAccountsStatus } from '../utils/updateInactiveAccountsStatus'
-import { minutesUntilMidnight } from '../utils/utils'
+import { minutesUntilMidnight, wakeupCall } from '../utils/utils'
+import { runLoginActivity } from './loginActivity'
 
 export async function runSurfing(account = null) {
+  createLog('Starting website surfing')
   await updateInactiveAccountsStatus()
   const browser = await getBrowser().catch((err) => {
     createLog(err.message)
@@ -16,6 +18,7 @@ export async function runSurfing(account = null) {
     if (!account) {
       await browser.close()
       createLog('No offline accounts found!')
+      runLoginActivity()
       return
     }
   }
@@ -33,7 +36,6 @@ export async function runSurfing(account = null) {
   await page.goto('https://www.asia-region.jocial.com/')
   await page.waitForSelector('iframe[title="reCAPTCHA"').catch(async (err) => {
     await browser.close()
-    // runSurfing(account)
     return
   })
   await page.waitForTimeout(2000)
@@ -114,5 +116,6 @@ async function surfingLoop(page: Page, loop = 1) {
     data: { lastActivity: new Date() },
     where: { id: account.id },
   })
+  wakeupCall()
   await surfingLoop(page, loop)
 }
