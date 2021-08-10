@@ -99,9 +99,14 @@ async function loginActivityCheck(page: Page, loop = 1) {
     await page.click('a[href="/Account/Logout"]')
     await page.waitForTimeout(7000)
     await updateAccount({
-      data: { loginActivity: 'DONE', statusDuration: minutesUntilMidnight() },
+      data: {
+        loginActivity: 'DONE',
+        statusDuration: minutesUntilMidnight(),
+        lastActivity: new Date(),
+      },
       where: { id: account.id },
     })
+    wakeupCall()
     return
   }
   updateAccount({

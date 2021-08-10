@@ -89,7 +89,7 @@ async function surfingLoop(page: Page, loop = 1) {
   createLog(`Current Points ${progress}`)
   if (loop > 40 || parseInt(progress) >= 10) {
     await updateAccount({
-      data: { status: 'DONE', statusDuration: minutesUntilMidnight() },
+      data: { status: 'DONE', statusDuration: minutesUntilMidnight(), lastActivity: new Date() },
       where: { id: account.id },
     })
     return
