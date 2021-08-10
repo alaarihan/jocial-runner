@@ -110,7 +110,7 @@ async function loginActivityCheck(page: Page, loop = 1) {
   })
 
   createLog(
-    `Login activity progress for account ${account.name}: ${loop * 3} minutes`,
+    `Login activity progress for account ${account.name}: ${loop * 2} minutes`,
   )
   loop++
   wakeupCall()
