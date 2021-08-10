@@ -73,7 +73,7 @@ export async function runLoginActivity(account = null) {
     await page.waitForTimeout(2000)
 
     await loginActivityCheck(page)
-    createLog('Finished login activity')
+    createLog(`Finished login activity for account ${account.name}`)
     await browser.close()
     runLoginActivity()
   } catch (err) {

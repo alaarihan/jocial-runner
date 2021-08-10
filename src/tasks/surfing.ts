@@ -74,19 +74,18 @@ export async function runSurfing(account = null) {
   await surfingPage.waitForSelector('h1 d')
   await page.waitForTimeout(4000)
   await surfingLoop(surfingPage)
-  createLog('Finished surfing websites')
+  createLog(`Finished surfing websites for account ${account.name}`)
   await browser.close()
   runSurfing()
 }
 
 async function surfingLoop(page: Page, loop = 1) {
   const account = cacheStore.get('account') as any
-  createLog(`Surfing a website #${loop}`)
   const progress = await page.evaluate(
     () => document.querySelector('h1 d').innerHTML,
   )
-
   createLog(`Current Points ${progress}`)
+  createLog(`Surfing a website #${loop}`)
   if (loop > 40 || parseInt(progress) >= 10) {
     await updateAccount({
       data: { status: 'DONE', statusDuration: minutesUntilMidnight(), lastActivity: new Date() },
@@ -97,7 +96,7 @@ async function surfingLoop(page: Page, loop = 1) {
   await page
     .waitForSelector('#rating', { visible: true, timeout: 150000 })
     .catch(async (err) => {
-      createLog('Click skip button because the rating element did not show up')
+      createLog('Click skip button because the rating element has not show up')
       await page.click('#Skip')
       await page.waitForTimeout(1000)
       updateAccount({
@@ -111,7 +110,6 @@ async function surfingLoop(page: Page, loop = 1) {
   await page.click('#NextSite')
   await page.waitForTimeout(3000)
   loop++
-  createLog('Update last activity')
   updateAccount({
     data: { lastActivity: new Date() },
     where: { id: account.id },
