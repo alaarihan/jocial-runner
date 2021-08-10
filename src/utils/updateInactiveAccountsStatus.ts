@@ -32,7 +32,7 @@ export async function updateInactiveAccountsStatus() {
 
 export async function updateInactiveAccountsLoginActivity() {
   const activityDelay = new Date()
-  activityDelay.setMinutes(activityDelay.getMinutes() - 10)
+  activityDelay.setMinutes(activityDelay.getMinutes() - 6)
   const variables = {
     orderBy: { lastActivity: 'asc' },
     where: {
