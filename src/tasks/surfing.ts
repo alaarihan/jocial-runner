@@ -124,6 +124,7 @@ async function surfingLoop(page: Page, loop = 1) {
         data: { lastActivity: new Date() },
         where: { id: account.id },
       })
+      wakeupCall()
       await page.waitForSelector('#rating', { visible: true, timeout: 150000 })
     })
   await page.click('li[data-value="5"]')
