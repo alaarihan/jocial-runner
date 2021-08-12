@@ -1,4 +1,4 @@
-import { Page } from 'puppeteer'
+import { Browser, Page } from 'puppeteer'
 import { cacheStore, getBrowser } from '../utils/cacheStore'
 import { getAccount, updateAccount } from '../utils/account'
 import { createLog } from '../utils/createLog'
@@ -8,75 +8,92 @@ import { runLoginActivity } from './loginActivity'
 
 export async function runSurfing(account = null) {
   createLog('Starting website surfing')
-  await updateInactiveAccountsStatus()
-  const browser = await getBrowser().catch((err) => {
-    createLog(err.message)
-  })
-  if (!browser) return
-  if (!account) {
-    account = await getAccount()
+  try {
+    await updateInactiveAccountsStatus()
+    const browser = await getBrowser().catch((err) => {
+      createLog(err.message)
+    })
+    if (!browser) return
     if (!account) {
-      await browser.close()
-      createLog('No offline accounts found!')
-      runLoginActivity()
-      return
+      account = await getAccount()
+      if (!account) {
+        await browser.close()
+        createLog('No offline accounts found!')
+        runLoginActivity()
+        return
+      }
     }
-  }
-  createLog(`Update account "${account.name}" status to Online`)
-  updateAccount({
-    data: { status: 'ONLINE', statusDuration: 3, lastActivity: new Date() },
-    where: { id: account.id },
-  })
-  const page = await browser.newPage()
-  await page.setViewport({
-    width: 1200,
-    height: 800,
-    deviceScaleFactor: 1,
-  })
-  await page.goto('https://www.asia-region.jocial.com/')
-  await page.waitForSelector('iframe[title="reCAPTCHA"').catch(async (err) => {
-    await browser.close()
-    return
-  })
-  await page.waitForTimeout(2000)
-  createLog(`Logging in account "${account.name}"`)
-  await page.waitForSelector('input[type=text]')
-  await page.type('input[type=text]', account.username)
-  await page.keyboard.down('Tab')
-  await page.keyboard.type(account.password)
-  await page.click('#btnlogin')
-  await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
-  createLog('Going to surf websites')
-  await page.click('a[href="/Account/Home"]')
-  await page
-    .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
-    .then(async () => {
-      await page.click('#welcomemsgbtn1')
+    createLog(`Update account "${account.name}" status to Online`)
+    updateAccount({
+      data: { status: 'ONLINE', statusDuration: 3, lastActivity: new Date() },
+      where: { id: account.id },
     })
-    .catch((err) => {
-      console.log('welcomemsgbtn1 not found!')
+    const page = await browser.newPage()
+    await page.setViewport({
+      width: 1200,
+      height: 800,
+      deviceScaleFactor: 1,
     })
+    await page.goto('https://www.asia-region.jocial.com/')
+    await page
+      .waitForSelector('iframe[title="reCAPTCHA"')
+      .catch(async (err) => {
+        await browser.close()
+        return
+      })
+    await page.waitForTimeout(2000)
+    createLog(`Logging in account "${account.name}"`)
+    await page.waitForSelector('input[type=text]')
+    await page.type('input[type=text]', account.username)
+    await page.keyboard.down('Tab')
+    await page.keyboard.type(account.password)
+    await page.click('#btnlogin')
+    await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
+    createLog('Going to surf websites')
+    await page.click('a[href="/Account/Home"]')
+    await page
+      .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
+      .then(async () => {
+        await page.click('#welcomemsgbtn1')
+      })
+      .catch((err) => {
+        console.log('welcomemsgbtn1 not found!')
+      })
 
-  await page.waitForTimeout(2000)
-  await page.click('a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp')
-  await page.waitForSelector('a[href="/Account/RewardProgram/Promotional/"]', {
-    visible: true,
-  })
-  await page.click('a[href="/Account/RewardProgram/Promotional/"]')
-  await page.waitForSelector(
-    'a[href="/Account/RewardProgram/Promotional/WebSurf"]',
-    { visible: true, timeout: 10000 },
-  )
-  await page.click('a[href="/Account/RewardProgram/Promotional/WebSurf"]')
-  await page.waitForTimeout(1000)
-  const pages = await browser.pages()
-  const surfingPage = pages[pages.length - 1]
-  await surfingPage.waitForSelector('h1 d')
-  await page.waitForTimeout(4000)
-  await surfingLoop(surfingPage)
-  createLog(`Finished surfing websites for account ${account.name}`)
-  await browser.close()
-  runSurfing()
+    await page.waitForTimeout(2000)
+    await page.click('a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp')
+    await page.waitForSelector(
+      'a[href="/Account/RewardProgram/Promotional/"]',
+      {
+        visible: true,
+      },
+    )
+    await page.click('a[href="/Account/RewardProgram/Promotional/"]')
+    await page.waitForSelector(
+      'a[href="/Account/RewardProgram/Promotional/WebSurf"]',
+      { visible: true, timeout: 10000 },
+    )
+    await page.click('a[href="/Account/RewardProgram/Promotional/WebSurf"]')
+    await page.waitForTimeout(1000)
+    const pages = await browser.pages()
+    const surfingPage = pages[pages.length - 1]
+    await surfingPage.waitForSelector('h1 d')
+    await page.waitForTimeout(4000)
+    await surfingLoop(surfingPage)
+    createLog(`Finished surfing websites for account ${account.name}`)
+    await browser.close()
+    runSurfing()
+  } catch (err) {
+    const browser = cacheStore.get('browser') as Browser
+    if (browser?.isConnected()) {
+      await browser.close()
+    }
+    await updateAccount({
+      data: { status: 'OFFLINE' },
+      where: { id: account.id },
+    })
+    throw err
+  }
 }
 
 async function surfingLoop(page: Page, loop = 1) {
@@ -88,7 +105,11 @@ async function surfingLoop(page: Page, loop = 1) {
   createLog(`Surfing a website #${loop}`)
   if (loop > 40 || parseInt(progress) >= 10) {
     await updateAccount({
-      data: { status: 'DONE', statusDuration: minutesUntilMidnight(), lastActivity: new Date() },
+      data: {
+        status: 'DONE',
+        statusDuration: minutesUntilMidnight(),
+        lastActivity: new Date(),
+      },
       where: { id: account.id },
     })
     return

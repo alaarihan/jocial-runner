@@ -85,7 +85,7 @@ export async function runLoginActivity(account = null) {
       data: { loginActivity: 'OFFLINE' },
       where: { id: account.id },
     })
-    return
+    throw err
   }
 }
 
