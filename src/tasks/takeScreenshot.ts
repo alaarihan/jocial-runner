@@ -9,5 +9,7 @@ export async function takeScreenshot() {
     const page = pages[pages.length - 1] as Page
     createLog('Take a screenshot')
     page.screenshot({path: `./public/screenshot-${new Date().toString()}.png`})
+  }else{
+    createLog('Taking a screenshot has been failed because a connected browser has not been found!')
   }
 }
