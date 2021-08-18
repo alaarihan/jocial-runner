@@ -1,5 +1,10 @@
 import NodeCache from 'node-cache'
-import puppeteer, { Browser } from 'puppeteer'
+import { Browser } from 'puppeteer'
+import puppeteer from 'puppeteer-extra'
+
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+
+puppeteer.use(StealthPlugin())
 
 export const cacheStore = new NodeCache({ useClones: false })
 
@@ -16,6 +21,7 @@ export async function getBrowser(
     browser.on('disconnected', () => {
       cacheStore.del('browser')
     })
+    console.log(await browser.userAgent());
 
     cacheStore.set('browser', browser)
   } else {

@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node -r dotenv/config dist/server",
     "dev": "ts-node-dev -r dotenv/config --no-notify --respawn --transpile-only --exit-child src/server",
+    "test:browser": "ts-node-dev -r dotenv/config --no-notify --respawn --transpile-only --exit-child src/testBrowser",
     "clean": "rm -rf dist",
     "build": "npm -s run clean && tsc",
     "prettier": "prettier --write src"
@@ -23,7 +24,9 @@
     "handlebars": "^4.7.7",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.1",
-    "puppeteer": "^10.1.0"
+    "puppeteer": "^10.2.0",
+    "puppeteer-extra": "^3.1.18",
+    "puppeteer-extra-plugin-stealth": "^2.7.8"
   },
   "devDependencies": {
     "@types/node": "^16.4.4",
