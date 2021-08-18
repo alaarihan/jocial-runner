@@ -3,9 +3,7 @@ import puppeteer, { Browser } from 'puppeteer'
 
 export const cacheStore = new NodeCache({ useClones: false })
 
-export async function getBrowser(
-  getNew: boolean = true,
-): Promise<Browser> {
+export async function getBrowser(getNew: boolean = true): Promise<Browser> {
   if (cacheStore.get('browser') === undefined) {
     const browser = await puppeteer.launch({
       headless: process.env.HEADLESS !== 'no' ? true : false,

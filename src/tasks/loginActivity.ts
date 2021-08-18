@@ -44,7 +44,9 @@ export async function runLoginActivity(account = null) {
       height: 900,
       deviceScaleFactor: 1,
     })
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.0 Safari/537.36')
+    await page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.0 Safari/537.36',
+    )
     await page.evaluateOnNewDocument(() => {
       if (navigator.webdriver === false) {
         // Post Chrome 89.0.4339.0 and already good
@@ -72,7 +74,7 @@ export async function runLoginActivity(account = null) {
     await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
     createLog('Going to dashboard page')
     await page.click('a[href="/Account/Home"]')
-   /*  await page
+    /*  await page
       .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
       .then(async () => {
         await page.click('#welcomemsgbtn1')

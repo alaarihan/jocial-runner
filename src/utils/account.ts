@@ -6,7 +6,7 @@ export async function getAccount(
     orderBy: { lastActivity: 'desc' },
     where: {
       status: { equals: 'OFFLINE' },
-      loginActivity: { notIn: ['ONLINE'] }
+      loginActivity: { notIn: ['ONLINE'] },
     } as any,
   },
 ) {
