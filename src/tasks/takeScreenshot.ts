@@ -8,7 +8,9 @@ export async function takeScreenshot() {
     const pages = await browser.pages()
     const page = pages[pages.length - 1] as Page
     createLog('Take a screenshot')
-    page.screenshot({path: `./public/screenshot-${new Date().toString()}.png`})
+    await page.screenshot({path: `./public/screenshot-${new Date().toString()}.png`}).catch(err => {
+      throw err
+    })
   }else{
     createLog('Taking a screenshot has been failed because a connected browser has not been found!')
   }

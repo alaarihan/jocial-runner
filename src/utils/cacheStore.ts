@@ -1,10 +1,5 @@
 import NodeCache from 'node-cache'
-import { Browser } from 'puppeteer'
-import puppeteer from 'puppeteer-extra'
-
-import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-
-puppeteer.use(StealthPlugin())
+import puppeteer, { Browser } from 'puppeteer'
 
 export const cacheStore = new NodeCache({ useClones: false })
 

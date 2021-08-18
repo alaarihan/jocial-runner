@@ -30,9 +30,20 @@ export async function runSurfing(account = null) {
     })
     const page = await browser.newPage()
     await page.setViewport({
-      width: 1200,
-      height: 800,
+      width: 1300,
+      height: 900,
       deviceScaleFactor: 1,
+    })
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.0 Safari/537.36')
+    await page.evaluateOnNewDocument(() => {
+      if (navigator.webdriver === false) {
+        // Post Chrome 89.0.4339.0 and already good
+      } else if (navigator.webdriver === undefined) {
+        // Pre Chrome 89.0.4339.0 and already good
+      } else {
+        // Pre Chrome 88.0.4291.0 and needs patching
+        delete Object.getPrototypeOf(navigator).webdriver
+      }
     })
     await page.goto('https://www.asia-region.jocial.com/')
     await page
@@ -51,14 +62,14 @@ export async function runSurfing(account = null) {
     await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
     createLog('Going to surf websites')
     await page.click('a[href="/Account/Home"]')
-    await page
+    /* await page
       .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
       .then(async () => {
         await page.click('#welcomemsgbtn1')
       })
       .catch((err) => {
         console.log('welcomemsgbtn1 not found!')
-      })
+      }) */
 
     await page.waitForTimeout(2000)
     await page.click('a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp')
@@ -130,7 +141,7 @@ async function surfingLoop(page: Page, loop = 1) {
   await page.click('li[data-value="5"]')
   await page.waitForTimeout(1000)
   await page.click('#NextSite')
-  await page.waitForTimeout(3000)
+  await page.waitForTimeout(5000)
   loop++
   updateAccount({
     data: { lastActivity: new Date() },
