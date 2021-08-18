@@ -21,7 +21,6 @@ export async function getBrowser(
     browser.on('disconnected', () => {
       cacheStore.del('browser')
     })
-    console.log(await browser.userAgent());
 
     cacheStore.set('browser', browser)
   } else {
