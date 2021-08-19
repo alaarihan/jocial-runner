@@ -40,22 +40,9 @@ export async function runLoginActivity(account = null) {
     })
     const page = await browser.newPage()
     await page.setViewport({
-      width: 1300,
-      height: 900,
+      width: 1200,
+      height: 800,
       deviceScaleFactor: 1,
-    })
-    await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.0 Safari/537.36',
-    )
-    await page.evaluateOnNewDocument(() => {
-      if (navigator.webdriver === false) {
-        // Post Chrome 89.0.4339.0 and already good
-      } else if (navigator.webdriver === undefined) {
-        // Pre Chrome 89.0.4339.0 and already good
-      } else {
-        // Pre Chrome 88.0.4291.0 and needs patching
-        delete Object.getPrototypeOf(navigator).webdriver
-      }
     })
     await page.goto('https://www.asia-region.jocial.com/')
     await page
@@ -74,14 +61,14 @@ export async function runLoginActivity(account = null) {
     await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
     createLog('Going to dashboard page')
     await page.click('a[href="/Account/Home"]')
-    /*  await page
+    await page
       .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
       .then(async () => {
         await page.click('#welcomemsgbtn1')
       })
       .catch((err) => {
         console.log('welcomemsgbtn1 not found!')
-      }) */
+      })
 
     await page.waitForTimeout(2000)
 
