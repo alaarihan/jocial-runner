@@ -48,6 +48,11 @@ export async function runSurfing(account = null) {
     await page.keyboard.down('Tab')
     await page.keyboard.type(account.password)
     await page.click('#btnlogin')
+    await page.waitForTimeout(2000)
+    if(page.url() === 'https://www.asia-region.jocial.com/Account/With-Jocial'){
+      await page.waitForSelector('a[href="/Account/Preview"]', { visible: true })
+      await page.click('a[href="/Account/Preview"]')
+    }
     await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
     createLog('Going to surf websites')
     await page.click('a[href="/Account/Home"]')
