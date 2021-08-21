@@ -48,8 +48,9 @@ export async function runSurfing(account = null) {
     await page.keyboard.down('Tab')
     await page.keyboard.type(account.password)
     await page.click('#btnlogin')
-    await page.waitForTimeout(2000)
-    if(page.url() === 'https://www.asia-region.jocial.com/Account/With-Jocial'){
+    await page.waitForTimeout(5000)
+    console.log(page.url())
+    if (page.url() === 'https://www.asia-region.jocial.com/Account/With-Jocial') {
       await page.waitForSelector('a[href="/Account/Preview"]', { visible: true })
       await page.click('a[href="/Account/Preview"]')
     }
@@ -65,7 +66,12 @@ export async function runSurfing(account = null) {
       .catch((err) => {
         console.log('welcomemsgbtn1 not found!')
       }) */
-      
+    await page.waitForSelector(
+      'a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp',
+      {
+        visible: true,
+      },
+    )
     await page.click('a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp')
     await page.waitForSelector(
       'a[href="/Account/RewardProgram/Promotional/"]',
