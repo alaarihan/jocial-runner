@@ -14,10 +14,10 @@ export async function testBrowser(account = null) {
       deviceScaleFactor: 1,
     })
     await page.goto(
-      'https://antoinevastel.com/bots/',
+      'https://bot.sannysoft.com/',
     )
     await page.waitForTimeout(2000)
-    await page.screenshot({ path: `browser.png`, fullPage: true })
+    await page.screenshot({ path: `browser.png` })
     await browser.close()
   } catch (err) {
     const browser = cacheStore.get('browser') as Browser
