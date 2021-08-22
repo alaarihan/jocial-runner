@@ -14,10 +14,10 @@ export async function testBrowser(account = null) {
       deviceScaleFactor: 1,
     })
     await page.goto(
-      'https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html',
+      'https://antoinevastel.com/bots/',
     )
     await page.waitForTimeout(2000)
-    await page.screenshot({ path: `browser.png` })
+    await page.screenshot({ path: `browser.png`, fullPage: true })
     await browser.close()
   } catch (err) {
     const browser = cacheStore.get('browser') as Browser
