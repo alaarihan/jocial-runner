@@ -113,7 +113,7 @@ async function surfingLoop(page: Page, loop = 1) {
     () => document.querySelector('h1 d').innerHTML,
   )
   createLog(`Current Points ${progress}`)
-  createLog(`Surfing a website #${loop}`)
+  createLog(`Surfing a website #${loop} on account ${account.name}`)
   if (loop > 40 || parseInt(progress) >= 10) {
     await updateAccount({
       data: {
