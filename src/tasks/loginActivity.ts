@@ -96,7 +96,7 @@ export async function runLoginActivity(account = null) {
 async function loginActivityCheck(page: Page, loop = 1) {
   const account = cacheStore.get('account') as any
   await page.waitForTimeout(120000)
-  if (loop > 63) {
+  if (loop > 50) {
     createLog(`Logging account ${account.name} out`)
     await page.click('.uesrName')
     await page.waitForTimeout(1000)
