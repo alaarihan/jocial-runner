@@ -59,7 +59,7 @@ export async function runLoginActivity(account = null) {
     await page.keyboard.type(account.password)
     await page.click('#btnlogin')
     await page.waitForTimeout(2000)
-    if(page.url() === 'https://www.asia-region.jocial.com/Account/With-Jocial'){
+    if (page.url() === 'https://www.asia-region.jocial.com/Account/With-Jocial') {
       await page.waitForSelector('a[href="/Account/Preview"]', { visible: true })
       await page.click('a[href="/Account/Preview"]')
     }
@@ -67,14 +67,14 @@ export async function runLoginActivity(account = null) {
     createLog('Going to dashboard page')
     await page.click('a[href="/Account/Home"]')
     await page.waitForTimeout(2000)
-   /*  await page
-      .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
-      .then(async () => {
-        await page.click('#welcomemsgbtn1')
-      })
-      .catch((err) => {
-        console.log('welcomemsgbtn1 not found!')
-      }) */
+    /*  await page
+       .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
+       .then(async () => {
+         await page.click('#welcomemsgbtn1')
+       })
+       .catch((err) => {
+         console.log('welcomemsgbtn1 not found!')
+       }) */
 
     await loginActivityCheck(page)
     createLog(`Finished login activity for account ${account.name}`)
@@ -94,7 +94,15 @@ export async function runLoginActivity(account = null) {
 }
 
 async function loginActivityCheck(page: Page, loop = 1) {
-  const account = cacheStore.get('account') as any
+  const account = cacheStore.get('account') as Record<string, any>
+  const browser = cacheStore.get('browser') as Browser
+  if (!browser?.isConnected()) {
+    await updateAccount({
+      data: { loginActivity: 'OFFLINE' },
+      where: { id: account.id },
+    })
+    throw new Error('The browser is not connected!, aborting..')
+  }
   await page.waitForTimeout(120000)
   if (loop > 50) {
     createLog(`Logging account ${account.name} out`)

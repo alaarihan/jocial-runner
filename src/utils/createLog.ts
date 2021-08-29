@@ -12,7 +12,7 @@ export async function createLog(message, type = 'INFO') {
     }
   }
 `
-  const account = cacheStore.get('account') as any
+  const account = cacheStore.get('account') as Record<string, any>
   const data = { message, type } as any
   if (account?.id) {
     data.account = {

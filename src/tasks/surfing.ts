@@ -84,12 +84,15 @@ export async function runSurfing(account = null) {
       'a[href="/Account/RewardProgram/Promotional/WebSurf"]',
       { visible: true, timeout: 10000 },
     )
-    await page.click('a[href="/Account/RewardProgram/Promotional/WebSurf"]')
     await page.waitForTimeout(1000)
+    await page.click('a[href="/Account/RewardProgram/Promotional/WebSurf"]')
+    await page.waitForTimeout(2000)
     const pages = await browser.pages()
     const surfingPage = pages[pages.length - 1]
-    await surfingPage.waitForSelector('h1 d')
-    await page.waitForTimeout(4000)
+    await surfingPage.waitForSelector('#Skip', { visible: true })
+    await surfingPage.click('#Skip')
+    await surfingPage.waitForSelector('h1 d', { visible: true })
+    await surfingPage.waitForTimeout(4000)
     await surfingLoop(surfingPage)
     createLog(`Finished surfing websites for account ${account.name}`)
     await browser.close()
@@ -108,7 +111,7 @@ export async function runSurfing(account = null) {
 }
 
 async function surfingLoop(page: Page, loop = 1) {
-  const account = cacheStore.get('account') as any
+  const account = cacheStore.get('account') as Record<string, any>
   const progress = await page.evaluate(
     () => document.querySelector('h1 d').innerHTML,
   )
@@ -138,8 +141,9 @@ async function surfingLoop(page: Page, loop = 1) {
       wakeupCall()
       await page.waitForSelector('#rating', { visible: true, timeout: 150000 })
     })
-  await page.click('li[data-value="5"]')
-  await page.waitForTimeout(1000)
+  const ratingVal = Math.floor(Math.random() * 5) + 1
+  await page.click(`li[data-value="${ratingVal}"]`)
+  await page.waitForTimeout(2000)
   await page.click('#NextSite')
   await page.waitForTimeout(3000)
   loop++
