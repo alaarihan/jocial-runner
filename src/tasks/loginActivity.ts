@@ -58,7 +58,10 @@ export async function runLoginActivity(account = null) {
     await page.keyboard.down('Tab')
     await page.keyboard.type(account.password)
     await page.click('#btnlogin')
-    await page.waitForTimeout(2000)
+    await page.waitForTimeout(5000)
+    if (page.url() === 'https://www.asia-region.jocial.com/') {
+      await page.waitForTimeout(15000)
+    }
     if (page.url() === 'https://www.asia-region.jocial.com/Account/With-Jocial') {
       await page.waitForSelector('a[href="/Account/Preview"]', { visible: true })
       await page.click('a[href="/Account/Preview"]')
