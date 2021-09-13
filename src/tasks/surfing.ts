@@ -120,7 +120,7 @@ async function surfingLoop(page: Page, loop = 1) {
   )
   createLog(`Current Points ${progress}`)
   createLog(`Surfing a website #${loop} on account ${account.name}`)
-  if (loop > 40 || parseInt(progress) >= 10) {
+  if (loop > 60 || parseInt(progress) >= 10) {
     await updateAccount({
       data: {
         status: 'DONE',
