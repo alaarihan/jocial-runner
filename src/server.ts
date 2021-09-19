@@ -2,6 +2,7 @@ import fastify from 'fastify'
 import Handlebars from 'handlebars'
 import path from 'path'
 import { runLoginActivity } from './tasks/loginActivity'
+import { accountLogout } from './tasks/logout'
 import { runSurfing } from './tasks/surfing'
 import { takeScreenshot } from './tasks/takeScreenshot'
 import { cacheStore } from './utils/cacheStore'
@@ -83,6 +84,14 @@ app.get('/run/screenshot', async (req, reply) => {
   }
   takeScreenshot()
   return reply.status(200).send('Taking a screenshot.')
+})
+
+app.get('/run/logout', async (req, reply) => {
+  if (req.query['secret'] !== process.env.APP_SECRET) {
+    return reply.status(403).send('Unauthorized!')
+  }
+  accountLogout()
+  return reply.status(200).send('Logging out.')
 })
 
 app.get('/callWebhook', async (req, reply) => {
