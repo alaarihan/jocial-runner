@@ -11,7 +11,7 @@ export async function getAccount(
   },
 ) {
   const QUERY = `
-  query getAccount($orderBy: [AccountOrderByInput], $where: AccountWhereInput) {
+  query getAccount($orderBy: [AccountOrderByWithRelationInput], $where: AccountWhereInput) {
     findFirstAccount(orderBy: $orderBy, where: $where) {
       id
       name
@@ -44,7 +44,7 @@ export async function getAccounts(
   variables = { orderBy: { lastActivity: 'asc' } },
 ) {
   const QUERY = `
-  query getAccount($orderBy: [AccountOrderByInput], $where: AccountWhereInput) {
+  query getAccount($orderBy: [AccountOrderByWithRelationInput], $where: AccountWhereInput) {
     findManyAccount(orderBy: $orderBy, where: $where) {
       id
       name
