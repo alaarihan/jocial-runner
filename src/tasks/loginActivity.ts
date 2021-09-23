@@ -70,14 +70,12 @@ export async function runLoginActivity(account = null) {
     createLog('Going to dashboard page')
     await page.click('a[href="/Account/Home"]')
     await page.waitForTimeout(2000)
-    /*  await page
-       .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
-       .then(async () => {
-         await page.click('#welcomemsgbtn1')
-       })
-       .catch((err) => {
-         console.log('welcomemsgbtn1 not found!')
-       }) */
+    await page
+      .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
+      .then(async () => {
+        await page.click('#welcomemsgbtn1')
+      })
+      .catch((err) => { })
 
     await loginActivityCheck(page)
     createLog(`Finished login activity for account ${account.name}`)

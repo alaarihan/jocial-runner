@@ -61,14 +61,12 @@ export async function runSurfing(account = null) {
     createLog('Going to surf websites')
     await page.click('a[href="/Account/Home"]')
     await page.waitForTimeout(2000)
-    /* await page
+    await page
       .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
       .then(async () => {
         await page.click('#welcomemsgbtn1')
       })
-      .catch((err) => {
-        console.log('welcomemsgbtn1 not found!')
-      }) */
+      .catch((err) => { })
     await page.waitForSelector(
       'a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp',
       {
