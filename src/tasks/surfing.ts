@@ -60,13 +60,22 @@ export async function runSurfing(account = null) {
     await page.waitForSelector('a[href="/Account/Home"]', { visible: true })
     createLog('Going to surf websites')
     await page.click('a[href="/Account/Home"]')
+    /* Temporary modals closing */
     await page
-      .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 10000 })
+    .waitForSelector('#welcomemsgbtn4', { visible: true, timeout: 5000 })
+    .then(async () => {
+      await page.click('#welcomemsgbtn4')
+    })
+    .catch((err) => { })
+  await page.waitForTimeout(1000)
+    await page
+      .waitForSelector('#welcomemsgbtn1', { visible: true, timeout: 5000 })
       .then(async () => {
         await page.click('#welcomemsgbtn1')
       })
       .catch((err) => { })
     await page.waitForTimeout(2000)
+    /* End closing */
     await page.waitForSelector(
       'a[href="/Account/RewardProgram/Dashboard"] .balAvaiRp',
       {
